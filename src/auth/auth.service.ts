@@ -1,22 +1,60 @@
-import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { AuthRepositoryService } from './repository/auth.repository.service';
+import { JwtPayload } from './interfaces';
+import { JwtService } from '@nestjs/jwt';
+import { LoginUserDto } from './dto/login-user.dto';
+import * as bcrypt from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
+  constructor(
+    private readonly authRepository: AuthRepositoryService,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  private getJwtToken(payload: JwtPayload) {
+    const token = this.jwtService.sign(payload);
+    return token;
   }
 
-  findAll() {
-    return `This action returns all auth`;
+  async create(createUserDto: CreateUserDto) {
+    const user = await this.authRepository.createUser(createUserDto);
+    if (!user) {
+      throw new UnauthorizedException('User not created');
+    }
+    const { password: _, ...userWithoutPassword } = user;
+    return {
+      ...userWithoutPassword,
+      token: this.getJwtToken({ id: user.id }),
+    };
+  }
+
+  async loginUser(loginDto: LoginUserDto) {
+    const { email, password } = loginDto;
+    const user = await this.authRepository.findUserByEmail(email);
+
+    if (!user) {
+      throw new UnauthorizedException('Credentials are not valid ');
+    }
+
+    if (!bcrypt.compareSync(password, user.password)) {
+      throw new UnauthorizedException('Credentials are not valid ');
+    }
+    // TODO: Retornar un JWT
+    const { password: _, ...userWithoutPassword } = user;
+    return {
+      ...userWithoutPassword,
+      token: this.getJwtToken({ id: user.id }),
+    };
   }
 
   findOne(id: number) {
     return `This action returns a #${id} auth`;
   }
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
+  update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} auth`;
   }
 
