@@ -23,13 +23,13 @@ export class AuthController {
     return this.authService.create(createUserDto);
   }
 
-  @Get('login')
+  @Post('login')
   loginUser(@Body() loginDto: LoginUserDto) {
     return this.authService.loginUser(loginDto);
   }
 
   @Get('private')
-  @Auth(ValidRoles.company)
+  @Auth(ValidRoles.applicant)
   testPrivateRoute() {
     return {
       ok: true,

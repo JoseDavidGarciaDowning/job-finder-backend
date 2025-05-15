@@ -3,3 +3,9 @@ export enum ValidRoles {
   applicant = 'applicant',
   company = 'company',
 }
+
+export enum ValidRolesToASimpleUser{
+  applicant = 'applicant',
+  company = 'company',
+}
+

@@ -34,7 +34,6 @@ export class AuthService {
   async loginUser(loginDto: LoginUserDto) {
     const { email, password } = loginDto;
     const user = await this.authRepository.findUserByEmail(email);
-
     if (!user) {
       throw new UnauthorizedException('Credentials are not valid ');
     }
@@ -42,10 +41,15 @@ export class AuthService {
     if (!bcrypt.compareSync(password, user.password)) {
       throw new UnauthorizedException('Credentials are not valid ');
     }
+
+    const roleName = await this.authRepository.getRoleNameFromUser(user);
+
+
     // TODO: Retornar un JWT
     const { password: _, ...userWithoutPassword } = user;
     return {
       ...userWithoutPassword,
+      currentRole: roleName,
       token: this.getJwtToken({ id: user.id }),
     };
   }

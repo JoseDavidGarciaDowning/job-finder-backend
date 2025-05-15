@@ -8,38 +8,77 @@ import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { DrizzleDB } from 'src/drizzle/types/drizzle';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { roles, userRoles, users } from '../../drizzle/schema/schema';
+import { Role, roles, userRoles, users } from '../../drizzle/schema/schema';
 import { META_ROLES } from '../decorators/role-protected.decorator';
 import { eq } from 'drizzle-orm';
 import { UserRole } from 'src/interfaces/user-role.interface';
 import * as bcrypt from 'bcryptjs';
 import { ValidRoles } from '../interfaces';
+import { ValidRolesToASimpleUser } from '../interfaces/valid-roles';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class AuthRepositoryService {
   constructor(@Inject(DRIZZLE) private db: DrizzleDB) {}
 
+  async validateAndGetRole(roleName: string): Promise<Role> {
+    if (
+      !Object.values(ValidRolesToASimpleUser).includes(
+        roleName as ValidRolesToASimpleUser,
+      )
+    ) {
+      throw new BadRequestException(
+        `El rol ${roleName} no es válido. Los roles válidos son ${META_ROLES}`,
+      );
+    }
+
+    const role = await this.db.query.roles.findFirst({
+      where: (roles, { eq }) => eq(roles.name, roleName),
+    });
+
+    if (!role) {
+      throw new BadRequestException(`El rol ${roleName} no existe.`);
+    }
+
+    return role;
+  }
+
+  async getRoleNameFromUser(user: User): Promise<string> {
+    if (!user) {
+      throw new BadRequestException(`El usuario no existe.`);
+    }
+
+    const role = await this.db.query.roles.findFirst({
+      where: (roles, { eq }) => eq(roles.id, user.currentRole),
+    });
+
+    if (!role) {
+      throw new BadRequestException(`El rol del usuario no existe.`);
+    }
+
+    return role.name;
+  }
+
   async createUser(createUserDto: CreateUserDto) {
+    const { currentRole: roleName, password, ...userData } = createUserDto;
+
     try {
-      //obtener rol
-      const role = await this.db.query.roles.findFirst({
-        where: (roles, { eq }) => eq(roles.name, 'applicant'),
-      });
+      // Validar y obtener el rol
+      const role = await this.validateAndGetRole(roleName);
 
-      if (!role) throw new Error('El rol no existe');
-
-      //crear usuario
-      const { password, ...userData } = createUserDto;
+      // Crear el usuario
+      const hashedPassword = bcrypt.hashSync(password, 10);
       const [user] = await this.db
         .insert(users)
         .values({
           ...userData,
-          password: bcrypt.hashSync(password, 10),
+          currentRole: role.id,
+          password: hashedPassword,
         })
         .returning();
 
-      // asignar el rol al usuario
-      const user_roles = await this.db
+      // Asignar el rol al usuario (si lo necesitas en una tabla intermedia)
+      await this.db
         .insert(userRoles)
         .values({
           userId: user.id,
@@ -47,7 +86,7 @@ export class AuthRepositoryService {
         })
         .returning();
 
-      return user;
+      return { ...user, currentRole: roleName }; // Retornar el usuario con su rol
     } catch (error) {
       this.handleDbError(error);
     }
@@ -59,6 +98,7 @@ export class AuthRepositoryService {
     }
     throw new InternalServerErrorException(
       'Unexpected error, check server logs',
+      error.message,
     );
   };
 

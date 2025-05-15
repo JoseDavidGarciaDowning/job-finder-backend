@@ -1,12 +1,15 @@
 import {
   IsBoolean,
   IsEmail,
+  IsEnum,
   IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { ValidRolesToASimpleUser } from '../interfaces/valid-roles';
+
 
 export class CreateUserDto {
   @IsEmail()
@@ -21,4 +24,8 @@ export class CreateUserDto {
   })
   password: string;
 
+  @IsEnum(ValidRolesToASimpleUser, {
+    message: 'The currentRole must be either "applicant" or "company"',
+  })
+  currentRole: ValidRolesToASimpleUser;
 }

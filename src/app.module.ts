@@ -10,6 +10,7 @@ import { SkillModule } from './skill/skill.module';
 import { DrizzleModule } from './drizzle/drizzle.module';
 
 import { ConfigModule } from '@nestjs/config';
+import { LocationModule } from './location/location.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ConfigModule } from '@nestjs/config';
     SkillModule,
     DrizzleModule,
     ConfigModule.forRoot({ isGlobal: true }),
+    LocationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
