@@ -1,9 +1,9 @@
 import { InferSelectModel, relations } from 'drizzle-orm';
-import { pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { pgTable, serial, text, uuid } from 'drizzle-orm/pg-core';
 import { users } from './user.entity';
 
 export const roles = pgTable('roles', {
-  id: serial('id').primaryKey().notNull(),
+  id: uuid('id').primaryKey().defaultRandom(),
   name: text('name').notNull(),
 });
 

@@ -11,6 +11,8 @@ import { DrizzleModule } from './drizzle/drizzle.module';
 
 import { ConfigModule } from '@nestjs/config';
 import { LocationModule } from './location/location.module';
+import { JobCharacteristicsModule } from './job-characteristics/job-characteristics.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { LocationModule } from './location/location.module';
     DrizzleModule,
     ConfigModule.forRoot({ isGlobal: true }),
     LocationModule,
+    JobCharacteristicsModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

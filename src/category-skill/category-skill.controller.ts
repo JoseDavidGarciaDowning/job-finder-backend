@@ -10,6 +10,7 @@ export class CategorySkillController {
   @Post()
   create(@Body() createCategorySkillDto: CreateCategorySkillDto) {
     return this.categorySkillService.create(createCategorySkillDto);
+
   }
 
   @Get()
@@ -19,16 +20,16 @@ export class CategorySkillController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.categorySkillService.findOne(+id);
+    return this.categorySkillService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateCategorySkillDto: UpdateCategorySkillDto) {
-    return this.categorySkillService.update(+id, updateCategorySkillDto);
+    return this.categorySkillService.update(id, updateCategorySkillDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.categorySkillService.remove(+id);
+    return this.categorySkillService.remove(id);
   }
 }

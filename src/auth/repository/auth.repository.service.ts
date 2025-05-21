@@ -112,7 +112,7 @@ export class AuthRepositoryService {
   }
 
   async findUserById(
-    id: number,
+    id: string,
   ): Promise<typeof users.$inferSelect | undefined> {
     const user = await this.db.query.users.findFirst({
       where: (users, { eq }) => eq(users.id, id),
@@ -120,7 +120,7 @@ export class AuthRepositoryService {
     return user;
   }
 
-  async findRolesByUserId(id: number): Promise<ValidRoles[]> {
+  async findRolesByUserId(id: string): Promise<ValidRoles[]> {
     const rolesResult = await this.db
       .select({ roleName: roles.name })
       .from(userRoles)
@@ -130,7 +130,7 @@ export class AuthRepositoryService {
     return rolesResult.map((role) => role.roleName as ValidRoles);
   }
 
-  async findUserWithRolesById(id: number): Promise<UserRole | undefined> {
+  async findUserWithRolesById(id: string): Promise<UserRole | undefined> {
     const result = await this.db
       .select({
         id: users.id,

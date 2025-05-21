@@ -27,5 +27,5 @@ export class CreateUserDto {
   @IsEnum(ValidRolesToASimpleUser, {
     message: 'The currentRole must be either "applicant" or "company"',
   })
-  currentRole: ValidRolesToASimpleUser;
+  currentRole: string;
 }

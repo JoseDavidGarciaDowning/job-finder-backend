@@ -1,7 +1,7 @@
 import { ValidRoles } from 'src/auth/interfaces';
 
 export type UserRole = {
-  id: number;
+  id: string;
   email: string;
   isActive: boolean;
   roleNames: ValidRoles[];

@@ -1,15 +1,17 @@
-import { boolean, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
+import { boolean,uuid, integer, pgTable, serial, text } from 'drizzle-orm/pg-core';
 import { roles } from './role.entity';
 import { InferInsertModel, InferSelectModel, relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
-  id: serial('id').primaryKey().notNull(),
+ id: uuid('id').primaryKey().defaultRandom()
+,
   email: text('email').notNull().unique(),
   password: text('password').notNull(),
   isActive: boolean('is_active').notNull().default(true),
-  currentRole: integer('current_role')
-    .notNull()
-    .references(() => roles.id, { onDelete: 'set null' }),
+  currentRole: uuid('current_role')
+  .notNull()
+  .references(() => roles.id, { onDelete: 'set null' }),
+
 });
 
 export const usersRoles = relations(users, ({ one }) => ({
