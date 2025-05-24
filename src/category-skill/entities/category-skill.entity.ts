@@ -1,6 +1,4 @@
 import { pgTable, uuid } from 'drizzle-orm/pg-core';
-// import { categories } from '@/category/entities/schema'; 
-// import { skills } from '@/skill/entities/schema'; 
 import { categories } from '../../category/entities/category.entity';
 import { skills } from '../../skill/entities/skill.entity';
 
