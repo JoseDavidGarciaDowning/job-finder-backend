@@ -1,36 +1,78 @@
-import { Injectable } from '@nestjs/common';
-import { db } from '../drizzle/db/db';
-import {categories } from '../drizzle/schema/schema';
-import { eq } from 'drizzle-orm';
+import {BadRequestException,ConflictException,Injectable,InternalServerErrorException,NotFoundException,} from '@nestjs/common';
+import { CategoryRepository } from './././repository/category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 
-
-
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    //return 'This action adds a new category';
-    return db.insert(categories).values(createCategoryDto).returning();
+  constructor(private readonly categoryRepository: CategoryRepository) {}
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    try {
+      const existing = await this.categoryRepository.findByName(createCategoryDto.name);
+      if (existing.length > 0) {
+        throw new ConflictException(`La categoría "${createCategoryDto.name}" ya existe.`);
+      }
+
+      const created = await this.categoryRepository.create(createCategoryDto);
+      return created[0];
+    } catch (error) {
+      console.error('Error al crear la categoría:', error);
+      throw new InternalServerErrorException('No se pudo crear la categoría.');
+    }
   }
 
-  findAll() {
-    //return `This action returns all category`;
-    return db.select().from(categories);
+  async findAll() {
+    try {
+      return await this.categoryRepository.findAll();
+    } catch (error) {
+      console.error('Error en findAll:', error);
+      throw new InternalServerErrorException('No se pudieron obtener las categorías.');
+    }
   }
 
-  findOne(id: string) {
-   // return `This action returns a #${id} category`;
-    return db.select().from(categories).where(eq(categories.id, id));
+  async findOne(id: string) {
+    try {
+      const result = await this.categoryRepository.findById(id);
+      if (result.length === 0) {
+        throw new NotFoundException(`Categoría con id ${id} no encontrada.`);
+      }
+      return result[0];
+    } catch (error) {
+      console.error('Error en findOne:', error);
+      throw new InternalServerErrorException('Error al buscar la categoría.');
+    }
   }
 
-  update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    //return `This action updates a #${id} category`;
-    return db.update(categories).set(updateCategoryDto).where(eq(categories.id, id)).returning();
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    try {
+      const updated = await this.categoryRepository.update(id, updateCategoryDto);
+      if (updated.length === 0) {
+        throw new NotFoundException(`No se pudo actualizar. La categoría con id ${id} no existe.`);
+      }
+      return updated[0];
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new BadRequestException(`El nombre de la categoría ya existe: ${error.message}`);
+      }
+      console.error('Error al actualizar la categoría:', error);
+      throw new InternalServerErrorException('No se pudo actualizar la categoría.');
+    }
   }
 
-  remove(id: string) {
-    //return `This action removes a #${id} category`;
-    return db.delete(categories).where(eq(categories.id, id)).returning();
+  async remove(id: string) {
+    try {
+      await this.categoryRepository.deleteCategorySkills(id);
+      const deleted = await this.categoryRepository.deleteCategory(id);
+
+      if (deleted.length === 0) {
+        throw new NotFoundException(`No se pudo eliminar la categoría con id ${id}, no existe.`);
+      }
+
+      return deleted[0];
+    } catch (error) {
+      console.error('Error al eliminar la categoría:', error);
+      throw new InternalServerErrorException('No se pudo eliminar la categoría.');
+    }
   }
 }

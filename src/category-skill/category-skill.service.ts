@@ -1,64 +1,72 @@
-
-import { Injectable } from '@nestjs/common';
-import { db } from '../drizzle/db/db';
-import { categorySkills, categories, skills } from '../drizzle/schema/schema';
+import {ConflictException,Injectable,InternalServerErrorException,NotFoundException,} from '@nestjs/common';
+import { CategorySkillRepository } from '././repository/category-skill.repository';
 import { CreateCategorySkillDto } from './dto/create-category-skill.dto';
 import { UpdateCategorySkillDto } from './dto/update-category-skill.dto';
-import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class CategorySkillService {
-  create(createCategorySkillDto: CreateCategorySkillDto) {
-    return db.insert(categorySkills).values(createCategorySkillDto).returning();
+  constructor(private readonly categorySkillRepository: CategorySkillRepository) {}
+
+  async create(dto: CreateCategorySkillDto) {
+    try {
+      const existing = await this.categorySkillRepository.findDuplicate(dto.categoryId, dto.skillId);
+      if (existing.length > 0) {
+        throw new ConflictException('Ya existe esta relación entre categoría y habilidad.');
+      }
+
+      const created = await this.categorySkillRepository.create(dto);
+      return created[0];
+    } catch (error) {
+      console.error('Error al crear la relación:', error);
+      throw new InternalServerErrorException('No se pudo crear la relación.');
+    }
   }
 
   async findAll() {
-    return db
-      .select({
-        id: categorySkills.id,
-        category: {
-          id: categories.id,
-          name: categories.name
-        },
-        skill: {
-          id: skills.id,
-          name: skills.name
-        }
-      })
-      .from(categorySkills)
-      .innerJoin(categories, eq(categorySkills.categoryId, categories.id))
-      .innerJoin(skills, eq(categorySkills.skillId, skills.id));
+    try {
+      return await this.categorySkillRepository.findAll();
+    } catch (error) {
+      console.error('Error al obtener relaciones:', error);
+      throw new InternalServerErrorException('No se pudieron obtener las relaciones.');
+    }
   }
 
- findOne(id: string) {
-  return db
-    .select({
-      id: categorySkills.id,
-      category: {
-        id: categories.id,
-        name: categories.name,
-      },
-      skill: {
-        id: skills.id,
-        name: skills.name,
-      },
-    })
-    .from(categorySkills)
-    .innerJoin(categories, eq(categorySkills.categoryId, categories.id))
-    .innerJoin(skills, eq(categorySkills.skillId, skills.id))
-    .where(eq(categorySkills.id, id));
-}
-
-
-  update(id: string, updateCategorySkillDto: UpdateCategorySkillDto) {
-    return db
-      .update(categorySkills)
-      .set(updateCategorySkillDto)
-      .where(eq(categorySkills.id, id))
-      .returning();
+  async findOne(id: string) {
+    try {
+      const result = await this.categorySkillRepository.findById(id);
+      if (result.length === 0) {
+        throw new NotFoundException(`La relación con id ${id} no existe.`);
+      }
+      return result[0];
+    } catch (error) {
+      console.error('Error al obtener la relación:', error);
+      throw new InternalServerErrorException('No se pudo obtener la relación.');
+    }
   }
 
-  remove(id: string) {
-    return db.delete(categorySkills).where(eq(categorySkills.id, id)).returning();
+  async update(id: string, dto: UpdateCategorySkillDto) {
+    try {
+      const updated = await this.categorySkillRepository.update(id, dto);
+      if (updated.length === 0) {
+        throw new NotFoundException(`No se encontró la relación con id ${id}.`);
+      }
+      return updated[0];
+    } catch (error) {
+      console.error('Error al actualizar la relación:', error);
+      throw new InternalServerErrorException('No se pudo actualizar la relación.');
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const deleted = await this.categorySkillRepository.remove(id);
+      if (deleted.length === 0) {
+        throw new NotFoundException(`No se encontró la relación con id ${id}.`);
+      }
+      return deleted[0];
+    } catch (error) {
+      console.error('Error al eliminar la relación:', error);
+      throw new InternalServerErrorException('No se pudo eliminar la relación.');
+    }
   }
 }

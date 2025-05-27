@@ -1,74 +1,79 @@
-// import { Injectable } from '@nestjs/common';
-// import { db } from '../drizzle/db/db';
-// import { company } from '../drizzle/schema/schema';
-// import { CreateCompanyDto } from './dto/create-company.dto';
-// import { UpdateCompanyDto } from './dto/update-company.dto';
-// import { eq } from 'drizzle-orm';
-
-// @Injectable()
-// export class CompanyService {
-// create(dto: CreateCompanyDto) {
-//     return db.insert(company).values(dto).returning();
-//   }
-
-//   findAll() {
-//     return db.select().from(company);
-//   }
-
-//   findOne(id: string) {
-//     return db.select().from(company).where(eq(company.id, id));
-//   }
-
-//   update(id: string, dto: UpdateCompanyDto) {
-//     return db.update(company).set(dto).where(eq(company.id, id)).returning();
-//   }
-
-//   remove(id: string) {
-//     return db.delete(company).where(eq(company.id, id)).returning();
-//   }
-// }
-import { Injectable } from '@nestjs/common';
-import { db } from '../drizzle/db/db';
-import { company, users } from '../drizzle/schema/schema'; // importa users
+import { Injectable, NotFoundException, ConflictException, InternalServerErrorException, } from '@nestjs/common';
+import { CompanyRepository } from './repository/company.repository';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
-import { eq } from 'drizzle-orm';
+
 
 @Injectable()
 export class CompanyService {
-  create(dto: CreateCompanyDto) {
-    return db.insert(company).values(dto).returning();
-  }
-  findAll() {
-    return db
-      .select({
-        companyId: company.id,
-        companyName: company.name,
-        description: company.description,
-        userEmail: users.email,
-      })
-      .from(company)
-      .innerJoin(users, eq(company.userId, users.id));
+  constructor(private readonly companyRepository: CompanyRepository) {}
+
+  async create(dto: CreateCompanyDto) {
+    try {
+      const existing = await this.companyRepository.findByName(dto.name);
+
+      if (existing.length > 0) {
+        throw new ConflictException('Ya existe una compañía con ese nombre.');
+      }
+
+      return await this.companyRepository.create(dto);
+    } catch (error) {
+      console.error('Error al crear la compañía:', error);
+      throw new InternalServerErrorException('No se pudo crear la compañía.');
+    }
   }
 
-  findOne(id: string) {
-    return db
-      .select({
-        companyId: company.id,
-        companyName: company.name,
-        description: company.description,
-        userEmail: users.email,
-      })
-      .from(company)
-      .innerJoin(users, eq(company.userId, users.id))
-      .where(eq(company.id, id));
+  async findAll() {
+    try {
+      return await this.companyRepository.findAllWithUser();
+    } catch (error) {
+      console.error('Error al obtener las compañías:', error);
+      throw new InternalServerErrorException('No se pudieron obtener las compañías.');
+    }
   }
 
-  update(id: string, dto: UpdateCompanyDto) {
-    return db.update(company).set(dto).where(eq(company.id, id)).returning();
+  async findOne(id: string) {
+    try {
+      const result = await this.companyRepository.findOneWithUser(id);
+
+      if (result.length === 0) {
+        throw new NotFoundException(`No se encontró la compañía con id ${id}.`);
+      }
+
+      return result[0];
+    } catch (error) {
+      console.error('Error al obtener la compañía:', error);
+      throw error instanceof NotFoundException ? error : new InternalServerErrorException('No se pudo obtener la compañía.');
+    }
   }
 
-  remove(id: string) {
-    return db.delete(company).where(eq(company.id, id)).returning();
+  async update(id: string, dto: UpdateCompanyDto) {
+    try {
+      const updated = await this.companyRepository.update(id, dto);
+
+      if (updated.length === 0) {
+        throw new NotFoundException(`No se pudo actualizar. La compañía con id ${id} no existe.`);
+      }
+
+      return updated[0];
+    } catch (error) {
+      console.error('Error al actualizar la compañía:', error);
+      throw error instanceof NotFoundException ? error : new InternalServerErrorException('No se pudo actualizar la compañía.');
+    }
+  }
+
+  async remove(id: string) {
+    try {
+      const deleted = await this.companyRepository.remove(id);
+
+      if (deleted.length === 0) {
+        throw new NotFoundException(`No se pudo eliminar. La compañía con id ${id} no existe.`);
+      }
+
+      return deleted[0];
+    } catch (error) {
+      console.error('Error al eliminar la compañía:', error);
+      throw error instanceof NotFoundException ? error : new InternalServerErrorException('No se pudo eliminar la compañía.');
+    }
   }
 }
