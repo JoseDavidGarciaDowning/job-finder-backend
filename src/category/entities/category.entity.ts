@@ -8,6 +8,3 @@ export const categories = pgTable('category',
 
 
 
-export class Category {
-
-}
