@@ -20,15 +20,18 @@ export class AuthService {
   }
 
   async create(createUserDto: CreateUserDto) {
-    const user = await this.authRepository.createUser(createUserDto);
-    if (!user) {
-      throw new UnauthorizedException('User not created');
-    }
-    const { password: _, ...userWithoutPassword } = user;
-    return {
-      ...userWithoutPassword,
-      token: this.getJwtToken({ id: user.id }),
-    };
+    
+      const user = await this.authRepository.createUser(createUserDto);
+
+      if (!user) {
+        return { error: 'User creation failed' };
+      }
+      const { password: _, ...userWithoutPassword } = user;
+      return {
+        ...userWithoutPassword,
+        token: this.getJwtToken({ id: user.id }),
+      };
+
   }
 
   async loginUser(loginDto: LoginUserDto) {

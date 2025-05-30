@@ -13,8 +13,8 @@ import { META_ROLES } from '../decorators/role-protected.decorator';
 import { eq } from 'drizzle-orm';
 import { UserRole } from 'src/interfaces/user-role.interface';
 import * as bcrypt from 'bcryptjs';
-import { ValidRoles } from '../interfaces';
-import { ValidRolesToASimpleUser } from '../interfaces/valid-roles';
+
+import { ValidRolesToASimpleUser, ValidRoles } from '../interfaces/valid-roles';
 import { User } from '../entities/user.entity';
 
 @Injectable()
@@ -59,11 +59,24 @@ export class AuthRepositoryService {
     return role.name;
   }
 
+  async getValidRolesFromDb(): Promise<Role[]> {
+    const validRoleNames = [
+      ValidRolesToASimpleUser.company,
+      ValidRolesToASimpleUser.applicant,
+    ];
+
+    const rolesFromDb = await this.db.query.roles.findMany({
+      where: (roles, { inArray }) => inArray(roles.name, validRoleNames),
+    });
+
+    return rolesFromDb;
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     const { currentRole: roleName, password, ...userData } = createUserDto;
 
     try {
-      // Validar y obtener el rol
+     
       const role = await this.validateAndGetRole(roleName);
 
       // Crear el usuario
@@ -78,19 +91,29 @@ export class AuthRepositoryService {
         .returning();
 
       // Asignar el rol al usuario (si lo necesitas en una tabla intermedia)
+      const validRoles = await this.getValidRolesFromDb();
       await this.db
         .insert(userRoles)
-        .values({
-          userId: user.id,
-          roleId: role.id,
-        })
+        .values(
+          validRoles.map((validRole) => ({
+        userId: user.id,
+        roleId: validRole.id,
+          }))
+        )
         .returning();
 
       return { ...user, currentRole: roleName }; // Retornar el usuario con su rol
     } catch (error) {
-      this.handleDbError(error);
+      if (error.code === '23505') {
+        throw new BadRequestException('El correo electrónico ya está en uso');
+      } else {
+        this.handleDbError(error);
+      }
     }
   }
+
+
+
 
   private handleDbError = (error: any) => {
     if (error.code === '23505') {
@@ -130,7 +153,7 @@ export class AuthRepositoryService {
     return rolesResult.map((role) => role.roleName as ValidRoles);
   }
 
-  async findUserWithRolesById(id: string): Promise<UserRole | undefined> {
+  async findUserWithRolesById(id: string): Promise<UserRole> {
     const result = await this.db
       .select({
         id: users.id,
