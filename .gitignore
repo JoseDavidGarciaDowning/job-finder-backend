@@ -1,5 +1,14 @@
 # compiled output
 /dist
+# En .gitignore
+postgres/
+data/
+*.init
+*.fsm
+*.ctl
+*.xact
+pg_*
+
 /node_modules
 /build
 

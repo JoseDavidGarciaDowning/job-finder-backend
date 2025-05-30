@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  Req,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -19,8 +20,10 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.authService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+
+      return await this.authService.create(createUserDto);
+
   }
 
   @Post('login')
@@ -30,10 +33,11 @@ export class AuthController {
 
   @Get('private')
   @Auth(ValidRoles.applicant)
-  testPrivateRoute() {
+  testPrivateRoute(@Req() request: Express.Request) {
     return {
       ok: true,
       message: 'Private route',
+      user: request.user,
     };
   }
 

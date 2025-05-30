@@ -10,6 +10,7 @@ import {
 import { LocationService } from './location.service';
 import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @Controller('location')
 export class LocationController {
@@ -32,21 +33,21 @@ export class LocationController {
   getCountryCode(@Param('input') input: string) {
     return this.locationService.getCountryCode(input);
   }
-  
-  @Get('autocomplete/:countryCode/:countryName')
+
+  @Get('autocomplete/:countryCode/:input')
   getAutocompleteFromCountry(
     @Param('countryCode') countryCode: string,
-    @Param('countryName') countryName: string,
+    @Param('input') input: string,
   ) {
-    return this.locationService.autocompleteFromCountry(
-      countryCode,
-      countryName,
-    );
+    return this.locationService.autocompleteFromCountry(countryCode, input);
   }
 
   @Post()
-  create(@Body() createLocationDto: CreateLocationDto) {
-    return this.locationService.create(createLocationDto);
+  saveLocationData(
+    @CurrentUser() user: any,
+    @Body() createLocationDto: CreateLocationDto,
+  ) {
+    return this.locationService.saveLocationData(createLocationDto, user);
   }
 
   @Get()
