@@ -7,4 +7,6 @@ export * from "../../category/entities/category.entity"
 export * from "../../job-characteristics/entities/job-characteristic.entity"
 export * from "../../skill/entities/skill.entity"
 
+export * from '../../applicant/entities/applicant.entity'
+
 
