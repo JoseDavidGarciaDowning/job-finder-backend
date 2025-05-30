@@ -3,11 +3,16 @@ import { CreateLocationDto } from './dto/create-location.dto';
 import { UpdateLocationDto } from './dto/update-location.dto';
 import { Client } from '@googlemaps/google-maps-services-js';
 import 'dotenv/config';
+import { User } from '../auth/entities/user.entity';
+import { LocationRepositoryService } from './repository/location.repository.service';
+import { UpdateApplicantDto } from '../applicant/dto/update-applicant.dto';
 @Injectable()
 export class LocationService {
   private client: any;
 
-  constructor() {
+  constructor(
+    private readonly locationRepository: LocationRepositoryService,
+  ) {
     this.client = new Client();
   }
 
@@ -145,8 +150,8 @@ export class LocationService {
     }
   }
 
-  create(createLocationDto: CreateLocationDto) {
-    return 'This action adds a new location';
+  async  saveLocationData(createLocationDto: CreateLocationDto, user: User) {
+    return await this.locationRepository.updateApplicantLocation( user.id, createLocationDto);
   }
 
   findAll() {
