@@ -1,2 +1,0 @@
-ALTER TABLE "users" ADD COLUMN "current_role" integer NOT NULL;--> statement-breakpoint
-ALTER TABLE "users" ADD CONSTRAINT "users_current_role_roles_id_fk" FOREIGN KEY ("current_role") REFERENCES "public"."roles"("id") ON DELETE set null ON UPDATE no action;
