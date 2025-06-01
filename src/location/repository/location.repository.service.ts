@@ -1,8 +1,9 @@
-import { DRIZZLE } from '@/src/drizzle/drizzle.module';
-import { DrizzleDB } from '@/src/drizzle/types/drizzle';
+//import { DRIZZLE } from '../src/drizzle/drizzle.module';
+import { DRIZZLE } from '../../drizzle/drizzle.module';
+import { DrizzleDB } from '../../drizzle/types/drizzle';
 import { Inject, Injectable } from '@nestjs/common';
 import { CreateLocationDto } from '../dto/create-location.dto';
-import { User } from '@/src/auth/entities/user.entity';
+import { User } from '../../auth/entities/user.entity';
 import { applicants } from '../../applicant/entities/applicant.entity';
 import { eq } from 'drizzle-orm';
 

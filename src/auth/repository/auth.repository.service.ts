@@ -4,8 +4,8 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { DRIZZLE } from 'src/drizzle/drizzle.module';
-import { DrizzleDB } from 'src/drizzle/types/drizzle';
+import { DRIZZLE } from '../../drizzle/drizzle.module';
+import { DrizzleDB } from '../../drizzle/types/drizzle';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Role, roles, userRoles, users } from '../../drizzle/schema/schema';

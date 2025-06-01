@@ -4,17 +4,14 @@ import { company, users } from '../../drizzle/schema/schema';
 import { CreateCompanyDto } from '../dto/create-company.dto';
 import { UpdateCompanyDto } from '../dto/update-company.dto';
 import { eq } from 'drizzle-orm';
-
 @Injectable()
 export class CompanyRepository {
   async findByName(name: string) {
     return db.select().from(company).where(eq(company.name, name));
   }
-
   async create(dto: CreateCompanyDto) {
     return db.insert(company).values(dto).returning();
   }
-
   async findAllWithUser() {
     return db
       .select({
@@ -26,7 +23,6 @@ export class CompanyRepository {
       .from(company)
       .innerJoin(users, eq(company.userId, users.id));
   }
-
   async findOneWithUser(id: string) {
     return db
       .select({
@@ -39,11 +35,9 @@ export class CompanyRepository {
       .innerJoin(users, eq(company.userId, users.id))
       .where(eq(company.id, id));
   }
-
   async update(id: string, dto: UpdateCompanyDto) {
     return db.update(company).set(dto).where(eq(company.id, id)).returning();
   }
-
   async remove(id: string) {
     return db.delete(company).where(eq(company.id, id)).returning();
   }
