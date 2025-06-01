@@ -48,9 +48,22 @@ CREATE TABLE "skills" (
 	"name" varchar(255) NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE "applicants" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid,
+	"id_laboral_experience" integer,
+	"id_education" integer,
+	"first_name" text NOT NULL,
+	"last_name" text,
+	"ubication" json,
+	"profile_picture_url" text,
+	"bio" text
+);
+--> statement-breakpoint
 ALTER TABLE "users" ADD CONSTRAINT "users_current_role_roles_id_fk" FOREIGN KEY ("current_role") REFERENCES "public"."roles"("id") ON DELETE set null ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "user_roles" ADD CONSTRAINT "user_roles_role_id_roles_id_fk" FOREIGN KEY ("role_id") REFERENCES "public"."roles"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "company" ADD CONSTRAINT "company_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_skills" ADD CONSTRAINT "category_skills_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "category_skills" ADD CONSTRAINT "category_skills_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;
+ALTER TABLE "category_skills" ADD CONSTRAINT "category_skills_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "applicants" ADD CONSTRAINT "applicants_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
