@@ -8,5 +8,7 @@ export * from "../../job-characteristics/entities/job-characteristic.entity"
 export * from "../../skill/entities/skill.entity"
 
 export * from '../../applicant/entities/applicant.entity'
+export * from '../../notifications/entities/device-token.entity'
+export * from '../../job-application/entities/job-application.entity'
 
 
