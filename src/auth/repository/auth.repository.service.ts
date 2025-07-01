@@ -76,7 +76,6 @@ export class AuthRepositoryService {
     const { currentRole: roleName, password, ...userData } = createUserDto;
 
     try {
-     
       const role = await this.validateAndGetRole(roleName);
 
       // Crear el usuario
@@ -96,9 +95,9 @@ export class AuthRepositoryService {
         .insert(userRoles)
         .values(
           validRoles.map((validRole) => ({
-        userId: user.id,
-        roleId: validRole.id,
-          }))
+            userId: user.id,
+            roleId: validRole.id,
+          })),
         )
         .returning();
 
@@ -112,16 +111,40 @@ export class AuthRepositoryService {
     }
   }
 
-
-
-
   private handleDbError = (error: any) => {
+    // Unique violation
     if (error.code === '23505') {
-      throw new BadRequestException(error.detail);
+      throw new BadRequestException('El recurso ya existe: ' + error.detail);
+    }
+    // Foreign key violation
+    if (error.code === '23503') {
+      throw new BadRequestException(
+        'Violación de clave foránea: ' + error.detail,
+      );
+    }
+    // Not null violation
+    if (error.code === '23502') {
+      throw new BadRequestException(
+        'Campo requerido faltante: ' + error.column,
+      );
+    }
+    // Check violation
+    if (error.code === '23514') {
+      throw new BadRequestException(
+        'Violación de restricción: ' + error.detail,
+      );
+    }
+    // Exclusion violation
+    if (error.code === '23P01') {
+      throw new BadRequestException('Violación de exclusión: ' + error.detail);
+    }
+    // Invalid text representation (e.g., UUID format)
+    if (error.code === '22P02') {
+      throw new BadRequestException('Formato inválido: ' + error.detail);
     }
     throw new InternalServerErrorException(
       'Unexpected error, check server logs',
-      error.message,
+      error,
     );
   };
 

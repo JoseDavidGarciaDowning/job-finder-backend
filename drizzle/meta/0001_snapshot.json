@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
   "id": "d681a5db-3780-4a61-9d41-6cab16c626a3",
   "prevId": "2e064ba4-0bb4-472c-8e5e-71457bb7ad40",
+=======
+  "id": "0e5d22b5-2bd8-4742-8441-6180f92d022b",
+  "prevId": "ef6da4b7-42f9-4727-8271-642ccdab6377",
+>>>>>>> ramaFiltrado
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -185,9 +190,15 @@
           "primaryKey": false,
           "notNull": false
         },
+<<<<<<< HEAD
         "location_id": {
           "name": "location_id",
           "type": "uuid",
+=======
+        "ubication": {
+          "name": "ubication",
+          "type": "json",
+>>>>>>> ramaFiltrado
           "primaryKey": false,
           "notNull": false
         }
@@ -439,6 +450,7 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+<<<<<<< HEAD
     "public.device_tokens": {
       "name": "device_tokens",
       "schema": "",
@@ -451,6 +463,137 @@
         },
         "user_id": {
           "name": "user_id",
+=======
+    "public.offer": {
+      "name": "offer",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "company_id": {
+          "name": "company_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "company_name": {
+          "name": "company_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "title": {
+          "name": "title",
+          "type": "varchar(255)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "salary": {
+          "name": "salary",
+          "type": "numeric(12, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "responsibilities": {
+          "name": "responsibilities",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "requirements": {
+          "name": "requirements",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "workplace_type": {
+          "name": "workplace_type",
+          "type": "workplace_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "work_schedule": {
+          "name": "work_schedule",
+          "type": "work_schedule",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "offer_duration": {
+          "name": "offer_duration",
+          "type": "offer_duration",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "ubication": {
+          "name": "ubication",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "publish_date": {
+          "name": "publish_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "now()"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "offer_company_id_company_id_fk": {
+          "name": "offer_company_id_company_id_fk",
+          "tableFrom": "offer",
+          "tableTo": "company",
+          "columnsFrom": [
+            "company_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.offer_skills": {
+      "name": "offer_skills",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "offer_id": {
+          "name": "offer_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "skill_id": {
+          "name": "skill_id",
+>>>>>>> ramaFiltrado
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -458,12 +601,34 @@
       },
       "indexes": {},
       "foreignKeys": {
+<<<<<<< HEAD
         "device_tokens_user_id_users_id_fk": {
           "name": "device_tokens_user_id_users_id_fk",
           "tableFrom": "device_tokens",
           "tableTo": "users",
           "columnsFrom": [
             "user_id"
+=======
+        "offer_skills_offer_id_offer_id_fk": {
+          "name": "offer_skills_offer_id_offer_id_fk",
+          "tableFrom": "offer_skills",
+          "tableTo": "offer",
+          "columnsFrom": [
+            "offer_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "offer_skills_skill_id_skills_id_fk": {
+          "name": "offer_skills_skill_id_skills_id_fk",
+          "tableFrom": "offer_skills",
+          "tableTo": "skills",
+          "columnsFrom": [
+            "skill_id"
+>>>>>>> ramaFiltrado
           ],
           "columnsTo": [
             "id"
@@ -479,7 +644,43 @@
       "isRLSEnabled": false
     }
   },
+<<<<<<< HEAD
   "enums": {},
+=======
+  "enums": {
+    "public.offer_duration": {
+      "name": "offer_duration",
+      "schema": "public",
+      "values": [
+        "1_mes",
+        "2_meses",
+        "2_semanas",
+        "3_a_5_meses"
+      ]
+    },
+    "public.work_schedule": {
+      "name": "work_schedule",
+      "schema": "public",
+      "values": [
+        "tiempo_completo",
+        "medio_tiempo",
+        "por_horas",
+        "flexible",
+        "jornada_rotativa",
+        "turno_nocturno"
+      ]
+    },
+    "public.workplace_type": {
+      "name": "workplace_type",
+      "schema": "public",
+      "values": [
+        "remoto",
+        "hibrido",
+        "presencial"
+      ]
+    }
+  },
+>>>>>>> ramaFiltrado
   "schemas": {},
   "sequences": {},
   "roles": {},

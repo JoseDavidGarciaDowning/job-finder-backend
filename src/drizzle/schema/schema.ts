@@ -11,4 +11,6 @@ export * from '../../applicant/entities/applicant.entity'
 export * from '../../notifications/entities/device-token.entity'
 export * from '../../job-application/entities/job-application.entity'
 
+export * from '../../offer/entities/offer.entity'
+export * from '../../offer/entities/offer-skill.entity'
 

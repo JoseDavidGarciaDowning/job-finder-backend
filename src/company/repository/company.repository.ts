@@ -9,8 +9,33 @@ export class CompanyRepository {
   async findByName(name: string) {
     return db.select().from(company).where(eq(company.name, name));
   }
-  async create(dto: CreateCompanyDto) {
-    return db.insert(company).values(dto).returning();
+  async create(dto: CreateCompanyDto, userId: string) {
+    try {
+      return await db.insert(company).values({ ...dto, userId }).returning();
+    } catch (error) {
+      this.handleDbErrors(error);
+    }
+  }
+
+  private handleDbErrors(error: any): never {
+    // Manejo de errores comunes de bases de datos (ejemplo para PostgreSQL)
+    if (error.code) {
+      switch (error.code) {
+        case '23505': // unique_violation
+          throw new Error('Ya existe un registro con los mismos datos únicos.');
+        case '23503': // foreign_key_violation
+          throw new Error('Referencia a clave foránea no válida.');
+        case '23502': // not_null_violation
+          throw new Error('Falta un valor requerido.');
+        case '22P02': // invalid_text_representation
+          throw new Error('Formato de dato inválido.');
+        case '42601': // syntax_error
+          throw new Error('Error de sintaxis en la consulta.');
+        default:
+          throw new Error(`Error de base de datos: ${error.message || error}`);
+      }
+    }
+    throw new Error(`Error inesperado en la base de datos: ${error.message || error}`);
   }
   async findAllWithUser() {
     return db

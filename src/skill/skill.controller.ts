@@ -16,7 +16,14 @@ export class SkillController {
   findAll() {
     return this.skillService.findAll();
   }
-
+  @Get('/by-category/:categoryId')
+  findAllSkillsByCategory(@Param('categoryId') categoryId: string) {
+    return this.skillService.findAllSkillsByCategory(categoryId);
+  }
+  @Get('/by-category/:categoryId/:name')
+  findSkillsByNameFromCategory(@Param('categoryId') categoryId: string, @Param('name') name: string) {
+    return this.skillService.findSkillsByNameFromCategory(categoryId, name);
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.skillService.findOne(id);
