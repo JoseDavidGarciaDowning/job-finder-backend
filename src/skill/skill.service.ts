@@ -65,4 +65,25 @@ export class SkillService {
       throw new InternalServerErrorException('No se pudo eliminar la habilidad.');
     }
   }
+  async findAllSkillsByCategory(categoryId: string) {
+    try {
+      const skills = await this.skillRepository.findAllSkillsByCategory(categoryId);
+      if (skills.length === 0) {
+        throw new NotFoundException(`No se encontraron habilidades para la categoría con id ${categoryId}.`);
+      }
+      return skills;
+    } catch (error) {
+      console.error('Error al buscar habilidades por categoría:', error);
+      throw new InternalServerErrorException('No se pudieron obtener las habilidades de la categoría.');
+    }
+  }
+  async findSkillsByNameFromCategory(categoryId: string, name: string) {
+ 
+      const skill = await this.skillRepository.findSkillsByNameFromCategory(categoryId, name);
+      if (skill.length === 0) {
+        throw new NotFoundException(`No se encontró la habilidad con nombre "${name}" para la categoría seleccionada`);
+      }
+      return skill;
+   
+  }
 }

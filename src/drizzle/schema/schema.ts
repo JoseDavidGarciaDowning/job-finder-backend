@@ -9,4 +9,6 @@ export * from "../../skill/entities/skill.entity"
 
 export * from '../../applicant/entities/applicant.entity'
 
+export * from '../../offer/entities/offer.entity'
+export * from '../../offer/entities/offer-skill.entity'
 

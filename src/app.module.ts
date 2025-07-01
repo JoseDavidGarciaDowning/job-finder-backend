@@ -13,6 +13,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LocationModule } from './location/location.module';
 import { JobCharacteristicsModule } from './job-characteristics/job-characteristics.module';
 import { CompanyModule } from './company/company.module';
+import { OfferModule } from './offer/offer.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CompanyModule } from './company/company.module';
     LocationModule,
     JobCharacteristicsModule,
     CompanyModule,
+    OfferModule,
   ],
   controllers: [AppController],
   providers: [AppService],

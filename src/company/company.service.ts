@@ -2,13 +2,14 @@ import { Injectable, NotFoundException, ConflictException, InternalServerErrorEx
 import { CompanyRepository } from './repository/company.repository';
 import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
+import { userRoles } from '../auth/entities/user-role.entity';
 
 
 @Injectable()
 export class CompanyService {
   constructor(private readonly companyRepository: CompanyRepository) {}
 
-  async create(dto: CreateCompanyDto) {
+  async create(dto: CreateCompanyDto, userId: string) {
     try {
       const existing = await this.companyRepository.findByName(dto.name);
 
@@ -16,7 +17,7 @@ export class CompanyService {
         throw new ConflictException('Ya existe una compañía con ese nombre.');
       }
 
-      return await this.companyRepository.create(dto);
+      return await this.companyRepository.create(dto, userId);
     } catch (error) {
       console.error('Error al crear la compañía:', error);
       throw new InternalServerErrorException('No se pudo crear la compañía.');

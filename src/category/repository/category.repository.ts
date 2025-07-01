@@ -4,11 +4,20 @@ import { categories, categorySkills } from '../../drizzle/schema/schema';
 import { CreateCategoryDto } from '../dto/create-category.dto';
 import { UpdateCategoryDto } from '../dto/update-category.dto';
 import { eq } from 'drizzle-orm';
+import { ilike } from 'drizzle-orm';
 
 @Injectable()
 export class CategoryRepository {
-  async findByName(name: string) {
-    return db.select().from(categories).where(eq(categories.name, name));
+  async findCategoryByName(name: string) {
+    const result = await db
+      .select()
+      .from(categories)
+      .where(ilike(categories.name, `%${name}%`))
+      .limit(10);
+
+   
+
+    return result;
   }
 
   async create(createCategoryDto: CreateCategoryDto) {
@@ -24,7 +33,11 @@ export class CategoryRepository {
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    return db.update(categories).set(updateCategoryDto).where(eq(categories.id, id)).returning();
+    return db
+      .update(categories)
+      .set(updateCategoryDto)
+      .where(eq(categories.id, id))
+      .returning();
   }
 
   async deleteCategorySkills(id: string) {

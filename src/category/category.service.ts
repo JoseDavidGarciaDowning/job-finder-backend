@@ -9,7 +9,7 @@ export class CategoryService {
 
   async create(createCategoryDto: CreateCategoryDto) {
     try {
-      const existing = await this.categoryRepository.findByName(createCategoryDto.name);
+      const existing = await this.categoryRepository.findCategoryByName(createCategoryDto.name);
       if (existing.length > 0) {
         throw new ConflictException(`La categoría "${createCategoryDto.name}" ya existe.`);
       }
@@ -74,5 +74,15 @@ export class CategoryService {
       console.error('Error al eliminar la categoría:', error);
       throw new InternalServerErrorException('No se pudo eliminar la categoría.');
     }
+  }
+
+  async findCategoryByName(name: string){
+   
+      const categories = await this.categoryRepository.findCategoryByName(name);
+      if (categories.length === 0) {
+        throw new NotFoundException(`No se encontraron categorías con el nombre "${name}".`);
+      }
+      return categories;
+   
   }
 }

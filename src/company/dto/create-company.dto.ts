@@ -1,17 +1,29 @@
-import { IsString, IsUUID, Length,IsOptional } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsUUID, Length,IsOptional, ValidateNested } from 'class-validator';
 
+class UbicationDto {
+  @IsString()
+  countryName: string;
+
+  @IsString()
+  countryId: string;
+
+  @IsString()
+  regionName: string;
+
+  @IsString()
+  regionId: string;
+}
 export class CreateCompanyDto {
   @IsString()
   @Length(1, 255)
   name: string;
 
-  @IsUUID()
-  userId: string;
 
   @IsString()
   description: string;
 
-  @IsOptional()
-  @IsUUID()
-  locationId?: string | null;
+  @ValidateNested()
+  @Type(() => UbicationDto)
+   ubication: UbicationDto;
 }

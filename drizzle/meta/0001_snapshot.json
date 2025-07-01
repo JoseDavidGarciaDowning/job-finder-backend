@@ -1,6 +1,6 @@
 {
-  "id": "ef6da4b7-42f9-4727-8271-642ccdab6377",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "0e5d22b5-2bd8-4742-8441-6180f92d022b",
+  "prevId": "ef6da4b7-42f9-4727-8271-642ccdab6377",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -557,7 +557,8 @@
           "name": "id",
           "type": "uuid",
           "primaryKey": true,
-          "notNull": true
+          "notNull": true,
+          "default": "gen_random_uuid()"
         },
         "offer_id": {
           "name": "offer_id",
