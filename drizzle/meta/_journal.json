@@ -5,36 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1751310173706,
-      "tag": "0000_misty_wither",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1751310805445,
-      "tag": "0001_ambitious_silver_sable",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1750619916907,
-      "tag": "0001_lyrical_susan_delgado",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1750627302126,
-      "tag": "0002_typical_owl",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1750627464677,
-      "tag": "0003_classy_psylocke",
+      "when": 1751353615081,
+      "tag": "0000_neat_skrulls",
       "breakpoints": true
     }
   ]

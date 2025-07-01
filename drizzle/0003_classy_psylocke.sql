@@ -1,1 +1,0 @@
-ALTER TABLE "job_applications" ALTER COLUMN "applicant_id" SET DATA TYPE uuid;

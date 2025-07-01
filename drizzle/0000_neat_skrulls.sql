@@ -63,6 +63,20 @@ CREATE TABLE "applicants" (
 	"bio" text
 );
 --> statement-breakpoint
+CREATE TABLE "device_tokens" (
+	"token" text PRIMARY KEY NOT NULL,
+	"user_id" uuid NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "job_applications" (
+	"id" serial PRIMARY KEY NOT NULL,
+	"job_id" integer NOT NULL,
+	"applicant_id" uuid NOT NULL,
+	"status" varchar(50) DEFAULT 'Enviada' NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "offer" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"company_id" uuid,
@@ -80,7 +94,7 @@ CREATE TABLE "offer" (
 );
 --> statement-breakpoint
 CREATE TABLE "offer_skills" (
-	"id" uuid PRIMARY KEY NOT NULL,
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"offer_id" uuid NOT NULL,
 	"skill_id" uuid NOT NULL
 );
@@ -92,6 +106,8 @@ ALTER TABLE "company" ADD CONSTRAINT "company_user_id_users_id_fk" FOREIGN KEY (
 ALTER TABLE "category_skills" ADD CONSTRAINT "category_skills_category_id_category_id_fk" FOREIGN KEY ("category_id") REFERENCES "public"."category"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "category_skills" ADD CONSTRAINT "category_skills_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "public"."skills"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "applicants" ADD CONSTRAINT "applicants_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "device_tokens" ADD CONSTRAINT "device_tokens_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "job_applications" ADD CONSTRAINT "job_applications_applicant_id_users_id_fk" FOREIGN KEY ("applicant_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "offer" ADD CONSTRAINT "offer_company_id_company_id_fk" FOREIGN KEY ("company_id") REFERENCES "public"."company"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "offer_skills" ADD CONSTRAINT "offer_skills_offer_id_offer_id_fk" FOREIGN KEY ("offer_id") REFERENCES "public"."offer"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "offer_skills" ADD CONSTRAINT "offer_skills_skill_id_skills_id_fk" FOREIGN KEY ("skill_id") REFERENCES "public"."skills"("id") ON DELETE cascade ON UPDATE no action;

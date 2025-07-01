@@ -1,1 +1,0 @@
-ALTER TABLE "offer_skills" ALTER COLUMN "id" SET DEFAULT gen_random_uuid();

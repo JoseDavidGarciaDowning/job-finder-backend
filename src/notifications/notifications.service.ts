@@ -9,7 +9,7 @@ import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { eq } from 'drizzle-orm';
 
 @Injectable()
-export class NotificationsService implements OnModuleInit {
+  export class NotificationsService implements OnModuleInit {
   private readonly logger = new Logger(NotificationsService.name);
 
   constructor(

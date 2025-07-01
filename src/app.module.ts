@@ -13,11 +13,8 @@ import { ConfigModule } from '@nestjs/config';
 import { LocationModule } from './location/location.module';
 import { JobCharacteristicsModule } from './job-characteristics/job-characteristics.module';
 import { CompanyModule } from './company/company.module';
-<<<<<<< HEAD
 import { NotificationsModule } from './notifications/notifications.module';
-=======
 import { OfferModule } from './offer/offer.module';
->>>>>>> ramaFiltrado
 
 @Module({
   imports: [
@@ -32,13 +29,10 @@ import { OfferModule } from './offer/offer.module';
     LocationModule,
     JobCharacteristicsModule,
     CompanyModule,
-<<<<<<< HEAD
     NotificationsModule,
-=======
     OfferModule,
->>>>>>> ramaFiltrado
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+    AppController,
+    AppService,
+  ]
 })
 export class AppModule {}
