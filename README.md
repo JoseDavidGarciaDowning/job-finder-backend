@@ -19,3 +19,4 @@ docker-compose up -d
 # Production
 
 1. pasos
+2. pasos
