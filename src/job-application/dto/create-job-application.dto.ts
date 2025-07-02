@@ -4,8 +4,8 @@ export class CreateJobApplicationDto {
   @IsInt()
   jobId: number;
 
-  @IsUUID()
-  applicantId: string;
+  // @IsUUID()
+  // applicantId: string;
 
   @IsString()
   @IsOptional() // Opcional en la creación, pero definido.

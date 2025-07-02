@@ -2,14 +2,19 @@ import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/commo
 import { JobApplicationService } from './job-application.service';
 import { CreateJobApplicationDto } from './dto/create-job-application.dto';
 import { UpdateJobApplicationDto } from './dto/update-job-application.dto';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import { User } from '../auth/entities/user.entity';
+import { ValidRoles } from '../auth/interfaces';
+import { Auth } from '../auth/decorators/auth.decorator';
 
 @Controller('job-application')
 export class JobApplicationController {
   constructor(private readonly jobApplicationService: JobApplicationService) {}
 
   @Post()
-  create(@Body() createJobApplicationDto: CreateJobApplicationDto) {
-    return this.jobApplicationService.create(createJobApplicationDto);
+  @Auth(ValidRoles.admin, ValidRoles.applicant)
+  create(@Body() createJobApplicationDto: CreateJobApplicationDto, @GetUser() user: User) {
+    return this.jobApplicationService.create(createJobApplicationDto, user.id);
   }
 
   @Get()

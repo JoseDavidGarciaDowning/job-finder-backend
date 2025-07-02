@@ -6,6 +6,8 @@ import { DRIZZLE } from 'src/drizzle/drizzle.module';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import * as schema from 'src/drizzle/schema/schema';
 import { eq } from 'drizzle-orm';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import { User } from 'src/drizzle/schema/schema';
 
 @Injectable()
 export class JobApplicationService {
@@ -14,13 +16,13 @@ export class JobApplicationService {
     @Inject(DRIZZLE) private db: PostgresJsDatabase<typeof schema>,
   ) {}
 
-  async create(createJobApplicationDto: CreateJobApplicationDto) {
-    const { jobId, applicantId, status } = createJobApplicationDto;
+  async create(createJobApplicationDto: CreateJobApplicationDto,  userId: string) {
+    const { jobId, status } = createJobApplicationDto;
     const newStatus = status || 'Enviada';
     const now = new Date();
     const [inserted] = await this.db.insert(schema.jobApplications).values({
       jobId,
-      applicantId,
+      applicantId: userId, // Assuming user.id is the UUID of the applicant
       status: newStatus,
       createdAt: now,
       updatedAt: now,
