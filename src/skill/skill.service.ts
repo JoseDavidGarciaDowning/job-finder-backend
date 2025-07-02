@@ -2,6 +2,7 @@ import {Injectable,ConflictException,InternalServerErrorException,NotFoundExcept
 import { SkillRepository } from '././repository/skill.repository';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
+import { seedSkills } from './seeds/skill.seed';
 
 @Injectable()
 export class SkillService {
@@ -85,5 +86,18 @@ export class SkillService {
       }
       return skill;
    
+  }
+
+  async runSeed() {
+    try {
+      await seedSkills();
+      return { 
+        success: true, 
+        message: 'Skills seed executed successfully' 
+      };
+    } catch (error) {
+      console.error('Error executing skills seed:', error);
+      throw new InternalServerErrorException('No se pudo ejecutar el seed de skills.');
+    }
   }
 }

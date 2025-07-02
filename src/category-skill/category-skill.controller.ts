@@ -32,4 +32,9 @@ export class CategorySkillController {
   remove(@Param('id') id: string) {
     return this.categorySkillService.remove(id);
   }
+
+  @Post('seed')
+  runSeed() {
+    return this.categorySkillService.runSeed();
+  }
 }

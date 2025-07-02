@@ -2,6 +2,7 @@ import {ConflictException,Injectable,InternalServerErrorException,NotFoundExcept
 import { CategorySkillRepository } from '././repository/category-skill.repository';
 import { CreateCategorySkillDto } from './dto/create-category-skill.dto';
 import { UpdateCategorySkillDto } from './dto/update-category-skill.dto';
+import { seedCategorySkills } from './seeds/category-skill.seed';
 
 @Injectable()
 export class CategorySkillService {
@@ -67,6 +68,19 @@ export class CategorySkillService {
     } catch (error) {
       console.error('Error al eliminar la relación:', error);
       throw new InternalServerErrorException('No se pudo eliminar la relación.');
+    }
+  }
+
+  async runSeed() {
+    try {
+      await seedCategorySkills();
+      return { 
+        success: true, 
+        message: 'Category-Skills seed executed successfully' 
+      };
+    } catch (error) {
+      console.error('Error executing category-skills seed:', error);
+      throw new InternalServerErrorException('No se pudo ejecutar el seed de category-skills.');
     }
   }
 }

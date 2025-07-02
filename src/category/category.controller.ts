@@ -49,4 +49,9 @@ export class CategoryController {
   remove(@Param('id') id: string) {
     return this.categoryService.remove(id);
   }
+
+  @Post('seed')
+  runSeed() {
+    return this.categoryService.runSeed();
+  }
 }

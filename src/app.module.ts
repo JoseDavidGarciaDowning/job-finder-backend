@@ -31,8 +31,8 @@ import { OfferModule } from './offer/offer.module';
     CompanyModule,
     NotificationsModule,
     OfferModule,
-    AppController,
-    AppService,
-  ]
+  ],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

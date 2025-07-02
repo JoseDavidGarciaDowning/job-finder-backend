@@ -38,4 +38,9 @@ export class SkillController {
   remove(@Param('id') id: string) {
     return this.skillService.remove(id);
   }
+
+  @Post('seed')
+  runSeed() {
+    return this.skillService.runSeed();
+  }
 }

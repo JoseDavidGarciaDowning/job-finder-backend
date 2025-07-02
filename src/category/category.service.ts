@@ -2,6 +2,7 @@ import {BadRequestException,ConflictException,Injectable,InternalServerErrorExce
 import { CategoryRepository } from './././repository/category.repository';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { seedCategories } from './seeds/category.seed';
 
 @Injectable()
 export class CategoryService {
@@ -84,5 +85,18 @@ export class CategoryService {
       }
       return categories;
    
+  }
+
+  async runSeed() {
+    try {
+      await seedCategories();
+      return {
+        success: true,
+        message: 'Categories seed executed successfully'
+      };
+    } catch (error) {
+      console.error('Error ejecutando el seed de categorías:', error);
+      throw new InternalServerErrorException('No se pudo ejecutar el seed de categorías.');
+    }
   }
 }
