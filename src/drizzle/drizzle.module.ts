@@ -1,4 +1,5 @@
 import { Inject, Module } from '@nestjs/common';
+import 'dotenv/config';
 import { ConfigService } from '@nestjs/config';
 import { drizzle, NodePgDatabase } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
@@ -14,7 +15,8 @@ export const DRIZZLE = Symbol('drizzle-connection');
         const databaseUrl = configService.get<string>('DATABASE_URL');
         const pool = new Pool({
           connectionString: databaseUrl,
-          // ssl: true,
+          ssl: process.env.STAGE === 'prod' ? { rejectUnauthorized: false } : false,
+         
         });
         return drizzle(pool, { schema }) as NodePgDatabase<typeof schema>;
       },
